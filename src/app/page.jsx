@@ -34,7 +34,7 @@ function MainComponent() {
   "C1012 Glacier White": `${process.env.PUBLIC_URL}/product_images/C1012.jpg`,
   "C1026 Polar": `${process.env.PUBLIC_URL}/product_images/C1026.jpg`,
   "C3269 Ash Grey": `${process.env.PUBLIC_URL}/product_images/C3269.jpg`,
-  };
+};
 
   const quotes = [
     "AI đang xử lý hình ảnh...",
