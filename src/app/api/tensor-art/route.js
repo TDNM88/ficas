@@ -2,30 +2,39 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request) {
   try {
-    const formData = await request.formData();
+    const { expireSec = 3600 } = await request.json();
     const apiKey = process.env.TENSOR_ART_API_KEY;
-    
-    // Xử lý upload ảnh và mask lên Tensor Art
-    const tensorResponse = await fetch('https://api.tensorart.com/v1/generate', {
+
+    const tensorResponse = await fetch('https://api.tensorart.com/v1/resource/image', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
       },
-      body: formData
+      body: JSON.stringify({ expireSec })
     });
 
     if (!tensorResponse.ok) {
-      throw new Error(`Lỗi từ Tensor Art: ${tensorResponse.statusText}`);
+      const errorData = await tensorResponse.json();
+      throw new Error(errorData.message || 'Lỗi từ Tensor Art API');
     }
 
-    const result = await tensorResponse.json();
-    return NextResponse.json({ 
-      url: result.outputUrl 
+    const { resourceId, putUrl, headers } = await tensorResponse.json();
+    
+    return NextResponse.json({
+      success: true,
+      resourceId,
+      uploadUrl: putUrl,
+      headers
     });
 
   } catch (error) {
     return NextResponse.json(
-      { message: error.message },
+      { 
+        code: 500,
+        message: error.message,
+        details: []
+      },
       { status: 500 }
     );
   }
