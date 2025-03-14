@@ -153,24 +153,25 @@ function MainComponent() {
     setError('');
 
     try {
-      const formData = new FormData();
-      formData.append('image', image);
-      formData.append('mask', dataURLtoBlob(mask));
-      formData.append('product', product);
-
-      const response = await axios.post('/api/tensor-art', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setProgress(percentCompleted);
-        }
+      // Bước 1: Lấy URL upload tạm
+      const { data: uploadInfo } = await axios.post('/api/tensor-art', {
+        expireSec: 3600 // Thời gian hết hạn 1 giờ
       });
 
-      setGeneratedImages([...generatedImages, response.data.url]);
+      // Bước 2: Upload ảnh lên S3 của Tensor Art
+      const uploadFormData = new FormData();
+      uploadFormData.append('file', image);
+      await axios.put(uploadInfo.uploadUrl, uploadFormData, {
+        headers: uploadInfo.headers
+      });
+
+      // Bước 3: Gọi API xử lý ảnh (cần implement thêm)
+      const processResponse = await axios.post('/api/process-image', {
+        resourceId: uploadInfo.resourceId,
+        product
+      });
+
+      setGeneratedImages([...generatedImages, processResponse.data.url]);
       toast.success('Tạo ảnh thành công!');
     } catch (err) {
       const errorMessage = axios.isAxiosError(err) && err.response
