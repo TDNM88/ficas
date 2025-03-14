@@ -31,8 +31,8 @@ function MainComponent() {
   const [modalImage, setModalImage] = useState('');
 
   // Bản đồ ảnh sản phẩm
-const PRODUCT_IMAGE_MAP: { [key: string]: string } = {
-  "C1012 Glacier White": `${process.env.PUBLIC_URL}/product_images/C1012.jpg`,
+  const PRODUCT_IMAGE_MAP: { [key: string]: string } = {
+  `${process.env.PUBLIC_URL}/product_images/C1012.jpg`,
   "C1026 Polar": `${process.env.PUBLIC_URL}/product_images/C1026.jpg`,
   "C3269 Ash Grey": `${process.env.PUBLIC_URL}/product_images/C3269.jpg`,
   "C3168 Silver Wave": `${process.env.PUBLIC_URL}/product_images/C3168.jpg`,
